@@ -5,7 +5,7 @@ require 'mongo'
 
 include Mongo
 
-TRIALS = 100000
+TRIALS = 10000
 
 def encode(doc)
   t0 = Time.new
@@ -48,6 +48,12 @@ TEST_CASES = [{},
                 "is" => {"a" => true},
                 "big" => [true, 5.5],
                 "object" => nil
+              },
+              {
+                "created_at" => Time.now
+              },
+              {
+                "dob" => Time.utc(1966, 2, 23)
               }]
 
 TEST_CASES.each { |doc|
@@ -55,5 +61,5 @@ TEST_CASES.each { |doc|
   print "enc bson\n"
   enc_bson = encode(doc)
   print "dec bson\n"
-  raise "FAIL" unless doc == decode(enc_bson)
+  raise "FAIL" unless doc.reject { |k, v| v.is_a? Time } == decode(enc_bson).reject { |k, v| v.is_a? Time } # don't test time objects
 }

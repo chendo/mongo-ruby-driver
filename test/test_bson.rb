@@ -116,6 +116,14 @@ class BSONTest < Test::Unit::TestCase
     # Mongo only stores up to the millisecond
     assert_in_delta doc['date'], doc2['date'], 0.001
   end
+  
+  def test_date_pre_1970
+    doc = {'date' => Time.utc(1969)}
+    @b.serialize(doc)
+    doc2 = @b.deserialize
+    # Mongo only stores up to the millisecond
+    assert_in_delta doc['date'], doc2['date'], 0.001
+  end
 
   def test_date_returns_as_utc
     doc = {'date' => Time.now}
