@@ -5,7 +5,7 @@ require 'mongo'
 
 include Mongo
 
-TRIALS = 10000
+TRIALS = 100000
 
 def encode(doc)
   t0 = Time.new

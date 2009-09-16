@@ -248,15 +248,10 @@ class BSON
   end
 
   def deserialize_date_data(buf)
-    original = millisecs = buf.get_long()
+    millisecs = buf.get_long()
+    millisecs = -(18446744073709551616 - millisecs) if millisecs > 42949672960000 # max of a 4-byte int * 1000 due to saving method
     millisecs = millisecs.to_f / 1000.0
-    
-    begin
-      Time.at(millisecs).utc # at() takes fractional seconds
-    rescue RangeError => ex
-      millisecs = -(18446744073709551616 - original)
-      Time.at(millisecs.to_f / 1000.0).utc
-    end
+    Time.at(millisecs).utc # at() takes fractional seconds
   end
 
   def deserialize_boolean_data(buf)
